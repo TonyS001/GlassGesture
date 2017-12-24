@@ -5,33 +5,38 @@ package com.example.tony.nodandshake;
  */
 
 import android.content.Context;
+
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class FileHelper {
 
     private Context mContext;
-
+    private BufferedWriter writer;
     //空参数构造函数，传入的值为空时，不出错
     public FileHelper() {
     }
 
-    public FileHelper(Context mContext) {
+    public FileHelper(Context mContext,String name) throws Exception{
         super();
+        FileOutputStream output = mContext.openFileOutput(name, Context.MODE_PRIVATE);
+        writer=new BufferedWriter(new OutputStreamWriter(output));
         this.mContext = mContext;
     }
 
     /*
     * 定义文件保存的方法，写入到文件中，所以是输出流
     * */
-    public void save(String name, String content) throws Exception {
+    public void save(String content) throws Exception {
         //Context.MODE_PRIVATE权限，只有自身程序才能访问，而且写入的内容会覆盖文本内原有内容
-        FileOutputStream output = mContext.openFileOutput(name, Context.MODE_PRIVATE);
-        output.write(content.getBytes());  //将String字符串以字节流的形式写入到输出流中
-        output.close();         //关闭输出流
+        writer.write(content);  //将String字符串以字节流的形式写入到输出流
     }
-
+    public void close() throws Exception{
+        writer.close();         //关闭输出流
+    }
     /*
     * 定义文件读取的方法
     * */

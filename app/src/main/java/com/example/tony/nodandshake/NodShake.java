@@ -23,7 +23,7 @@ public class NodShake extends AppCompatActivity {
     private long TStart=0;
     private long charge=0;
     private Context mContext;
-
+    private FileHelper fHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,11 @@ public class NodShake extends AppCompatActivity {
         sensorManager.registerListener(sensorEventListener, AccelerSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         //TStart = SystemClock.elapsedRealtime();
+        try {
+            fHelper = new FileHelper(mContext,"NodData.txt");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -46,6 +51,13 @@ public class NodShake extends AppCompatActivity {
         super.onDestroy();
         if(sensorManager != null) {
             sensorManager.unregisterListener(sensorEventListener);
+        }
+        try{
+            if(fHelper!=null){
+                fHelper.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -55,13 +67,10 @@ public class NodShake extends AppCompatActivity {
             float x = sensorEvent.values[0];
             float y = sensorEvent.values[1];
             float z = sensorEvent.values[2];
-
-            FileHelper fHelper = new FileHelper(mContext);
-            String filename = "data.txt";
-            String filetext = String.valueOf(y);
             try {
+                String filetext = String.valueOf(y);
                 //保存文件名和内容
-                fHelper.save(filename, filetext);
+                fHelper.save("y:"+filetext+" \n");
             } catch (Exception e) {
                 //写入异常时
                 e.printStackTrace();
